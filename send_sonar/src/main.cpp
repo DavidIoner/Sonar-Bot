@@ -2,21 +2,18 @@
 
 BluetoothSerial SerialBT;
 
-int valor = 0;
-
 void setup() {
-  Serial.begin(115200);
-  SerialBT.begin("ESP32"); // Nome do dispositivo Bluetooth
+  Serial.begin(9600);  // Baud rate de 9600
+  SerialBT.begin("ESP32_BT"); // Nome do dispositivo Bluetooth
 }
 
 void loop() {
-  // Construir o JSON
-  String json = "{\"valor\": " + String(valor) + "}";
-  
-  // Enviar o JSON via Bluetooth
-  SerialBT.println(json);
-  
-  // Incrementar o valor a cada segundo
-  valor++;
-  delay(1000);
+  if (Serial.available()) {
+    // Lê o JSON da comunicação serial
+    String jsonString = Serial.readStringUntil('\n');
+    
+    // Envia o JSON pela comunicação Bluetooth
+    SerialBT.println(jsonString);
+
+  }
 }
