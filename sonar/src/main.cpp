@@ -19,8 +19,8 @@ void toEsp(int distancia, int angulo){
   StaticJsonDocument<200> doc;
   
   // Adiciona dados ao JSON (por exemplo, um contador)
-  doc["distancia"] = distancia;
   doc["angulo"] = angulo;
+  doc["distancia"] = distancia;
   
   // Serializa o JSON para uma string
   String jsonString;
@@ -49,20 +49,21 @@ int sonar() {
 
 void varredura() {
   // Faz a varredura de 90 graus para um lado
-  for (pos = 90; pos >= 0; pos -= 1) {
+  for (pos = 90; pos >= 0; pos -= 6) {
     meuServo.write(pos);
     toEsp(sonar(), pos);
   }
 
   // Faz a varredura de 90 graus para o outro lado
-  for (pos = 0; pos <= 180; pos += 1) {
+  for (pos = 0; pos <= 180; pos += 6) {
     meuServo.write(pos);
     toEsp(sonar(), pos);
   }
 
-  for (pos = 180; pos >= 90; pos -= 1) {
+  for (pos = 180; pos >= 90; pos -= 6) {
     meuServo.write(pos);
     delay(10);
+
   }
 }
 
@@ -76,5 +77,6 @@ void setup() {
 
 void loop() {
   varredura();
+
   delay(1000);
 }

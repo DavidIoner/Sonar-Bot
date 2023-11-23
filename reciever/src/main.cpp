@@ -19,7 +19,6 @@ void loop() {
   if (SerialBT.available()) {
     // Lê o JSON da comunicação Bluetooth
     String jsonString = SerialBT.readStringUntil('\n');
-    Serial.print(".");
     // Envia o JSON pela comunicação serial
     Serial.println(jsonString);
   }
