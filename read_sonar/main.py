@@ -8,6 +8,8 @@ import serial
 for i in range(10):
     try:
         ser = serial.Serial('COM3', 9600)  # Substitua 'COMx' pela porta serial correta
+        if ser:
+            pass
     except:
         sleep(1)
         print(f"Conectando a porta COM. Tentativa: {i+1}")
