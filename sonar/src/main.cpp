@@ -10,9 +10,71 @@ long duration;
 int distance;
 
 // Servo motor
-Servo meuServo;  // Cria um objeto do tipo Servo para controlar um servo motor
-int pos = 0;     // Variável para armazenar a posição atual do servo motor
+Servo meuServo; 
+int pos = 0;     
 int servoPin = 10;
+
+// Ponte H
+int IN1 = 4;
+int IN2 = 5;
+int IN3 = 6;
+int IN4 = 7;
+
+int direita;
+int esquerda;
+int centro;
+
+void moviment(String direction) {
+  if (direction == "centro") {
+    //Gira o Motor A no sentido horario
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    //girar motor b no sentido horário
+    digitalWrite(IN3, HIGH); 
+    digitalWrite(IN4, LOW);
+  }
+  if (direction == "re") {
+    // M1
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    // M2
+    digitalWrite(IN3, LOW); 
+    digitalWrite(IN4, HIGH);
+  }
+  if (direction == "direita") {
+    moviment("re");
+    delay(1000);
+    // M1
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    // M2
+    digitalWrite(IN3, LOW); 
+    digitalWrite(IN4, HIGH);
+    delay(300);
+  }
+  if (direction == "esquerda") {
+    moviment("re");
+    delay(1000);
+    // M1
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    // M2
+    digitalWrite(IN3, HIGH); 
+    digitalWrite(IN4, LOW);
+    delay(300);
+  }
+  // ----------------------------------------------------------------
+  // CONFERIR ISSO!!!!!!!!!!!!
+  // ---------------------------------------------------------------- 
+  if (direction == "parar") {
+    // M1
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, HIGH);
+    // M2
+    digitalWrite(IN3, HIGH); 
+    digitalWrite(IN4, HIGH);
+  }
+}
 
 
 void toEsp(int distancia, int angulo){
@@ -47,23 +109,38 @@ int sonar() {
   return distance;
 }
 
-void varredura() {
+String varredura() {
   // Faz a varredura de 90 graus para um lado
-  for (pos = 90; pos >= 0; pos -= 6) {
+  for (pos = 90; pos >= 0; pos -= 3) {
     meuServo.write(pos);
     toEsp(sonar(), pos);
+    if (pos == 0){
+      delay(30);
+      direita = sonar();
+    }   
+    delay(30);
   }
 
   // Faz a varredura de 90 graus para o outro lado
-  for (pos = 0; pos <= 180; pos += 6) {
+  for (pos = 0; pos <= 180; pos += 3) {
     meuServo.write(pos);
     toEsp(sonar(), pos);
+    if (pos == 180){
+      delay(30);
+      esquerda = sonar();
+    }
+    delay(30);
   }
 
-  for (pos = 180; pos >= 90; pos -= 6) {
+  for (pos = 180; pos >= 90; pos -= 3) {
     meuServo.write(pos);
     delay(10);
-
+  }
+  // calcula a melhor distancia
+  if (esquerda > direita){
+    return "esquerda";
+  } else {
+    return "direita";
   }
 }
 
@@ -76,7 +153,11 @@ void setup() {
 }
 
 void loop() {
+  if (sonar() <= 30) {
+    moviment("parar");
+    moviment(varredura());
+  }
+  moviment("centro");
+  delay(100);
   varredura();
-
-  delay(1000);
 }
